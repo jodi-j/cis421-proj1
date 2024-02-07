@@ -92,7 +92,8 @@ class Maze:
             currCell=open.get()[2]
             if currCell== self.goal:
                 break
-            for d in 'ESNW':
+            eswn = self.get_neighbors(currCell)
+            for d in eswn:
                 row, col = currCell  # Extract row and column from the tuple
                 if d == 'E' and col + 1 < self.size and self.maze[row][col + 1] == '.':
                     childCell = (row, col + 1)
@@ -119,6 +120,17 @@ class Maze:
             fwdPath[aPath[cell]]=cell
             cell=aPath[cell]
         return fwdPath
+    
+    def get_neighbors(self, cell):
+        row, col = cell
+        neighbors = []
+
+        for dr, dc, direction in [(1, 0, 'S'), (-1, 0, 'N'), (0, 1, 'E'), (0, -1, 'W')]:
+            new_row, new_col = row + dr, col + dc
+            if 0 <= new_row < self.size and 0 <= new_col < self.size and self.maze[new_row][new_col] == '.':
+                neighbors.append(((new_row, new_col), direction))
+
+        return neighbors
 
 test = Maze(size=10, density=0.3)
 test.create_maze()
