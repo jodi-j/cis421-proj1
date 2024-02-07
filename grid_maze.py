@@ -25,8 +25,13 @@ class Maze:
         return self.maze
     
     def print_maze(self):
-        for row in self.maze:
-            print(' '.join(row))
+        for row_index, row in enumerate(self.maze):
+            for col_index, cell in enumerate(row):
+                if row_index == 0 and col_index == 0:
+                    print('S', end=' ')
+                else:
+                    print(cell, end=' ')
+            print()  # Move to the next line after printing each row
 
     def breadth_first_search(self):
         frontier = deque([(self.start, [])])  # Initialize the queue with the start position and an empty path
