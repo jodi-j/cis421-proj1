@@ -14,7 +14,7 @@ class Maze:
         #self.maze[0][0] = 'S'
         goal_row, goal_col = random.randint(0, self.size - 1), random.randint(0, self.size - 1)
         self.goal = (goal_row, goal_col)
-        self.maze[goal_row][goal_col] = 'G'
+       # self.maze[goal_row][goal_col] = 'G'
 
         num_obstacles = random.randint(10, 12)
         for _ in range(num_obstacles):
@@ -30,6 +30,8 @@ class Maze:
             for col_index, cell in enumerate(row):
                 if row_index == 0 and col_index == 0:
                     print('S', end=' ')
+                elif row_index == self.goal[0] and col_index == self.goal[1]:
+                    print('G', end=' ')
                 else:
                     print(cell, end=' ')
             print()  # Move to the next line after printing each row
@@ -118,6 +120,8 @@ class Maze:
         cell=self.goal
         while cell!=self.start:
             fwdPath[aPath[cell]]=cell
+            print(fwdPath[aPath[cell]])
+            print(len(fwdPath))
             cell=aPath[cell]
         return fwdPath
     
