@@ -95,13 +95,13 @@ class Maze:
             eswn = self.get_neighbors(currCell)
             for d in eswn:
                 row, col = currCell  # Extract row and column from the tuple
-                if d == 'E' and col + 1 < self.size and self.maze[row][col + 1] == '.':
+                if d[1] == 'E' and col + 1 < self.size and self.maze[row][col + 1] == '.':
                     childCell = (row, col + 1)
-                elif d == 'W' and col - 1 >= 0 and self.maze[row][col - 1] == '.':
+                elif d[1] == 'W' and col - 1 >= 0 and self.maze[row][col - 1] == '.':
                     childCell = (row, col - 1)
-                elif d == 'N' and row - 1 >= 0 and self.maze[row - 1][col] == '.':
+                elif d[1] == 'N' and row - 1 >= 0 and self.maze[row - 1][col] == '.':
                     childCell = (row - 1, col)
-                elif d == 'S' and row + 1 < self.size and self.maze[row + 1][col] == '.':
+                elif d[1] == 'S' and row + 1 < self.size and self.maze[row + 1][col] == '.':
                     childCell = (row + 1, col)
                 else:
                     continue
