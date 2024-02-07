@@ -1,5 +1,6 @@
 import random
 from collections import deque
+from queue import PriorityQueue
 
 class Maze:
     def __init__(self, size, density):
@@ -70,6 +71,54 @@ class Maze:
                 frontier.append(((row, col + 1), path + [current]))
                 frontier.append(((row, col - 1), path + [current]))
         return None
+   
+    def h(self,cell1,cell2):
+        x1,y1=cell1
+        x2,y2=cell2
+
+        return abs(x1-x2) + abs(y1-y2)
+    
+    def astar(self):
+        g_score = {(row, col): float('inf') for row in range(self.size) for col in range(self.size)}
+        g_score[self.start] = 0 
+        f_score = {(row, col): float('inf') for row in range(self.size) for col in range(self.size)}
+        f_score[self.start] = 0 
+
+        open=PriorityQueue()
+        open.put((self.h(self.start, self.goal),self.h(self.start, self.goal),self.start))
+        aPath={}
+    
+        while not open.empty():
+            currCell=open.get()[2]
+            if currCell== self.goal:
+                break
+            for d in 'ESNW':
+                row, col = currCell  # Extract row and column from the tuple
+                if d == 'E' and col + 1 < self.size and self.maze[row][col + 1] == '.':
+                    childCell = (row, col + 1)
+                elif d == 'W' and col - 1 >= 0 and self.maze[row][col - 1] == '.':
+                    childCell = (row, col - 1)
+                elif d == 'N' and row - 1 >= 0 and self.maze[row - 1][col] == '.':
+                    childCell = (row - 1, col)
+                elif d == 'S' and row + 1 < self.size and self.maze[row + 1][col] == '.':
+                    childCell = (row + 1, col)
+                else:
+                    continue
+
+                temp_g_score=g_score[currCell]+1
+                temp_f_score=temp_g_score+self.h(childCell, self.goal)
+
+                if temp_f_score < f_score[childCell]:
+                    g_score[childCell]= temp_g_score
+                    f_score[childCell]= temp_f_score
+                    open.put((temp_f_score,self.h(childCell, self.goal),childCell))
+                    aPath[childCell]=currCell
+        fwdPath={}
+        cell=self.goal
+        while cell!=self.start:
+            fwdPath[aPath[cell]]=cell
+            cell=aPath[cell]
+        return fwdPath
 
 test = Maze(size=10, density=0.3)
 test.create_maze()
@@ -77,13 +126,17 @@ test.print_maze()
 
 path = test.breadth_first_search()
 path2 = test.depth_first_search()
+path3 = test.astar()
 
-if path and path2:
+if path and path2 and path3:
     print("BFS:")
     for position in path:
         print(position)
-    print("DFS")
-    for pos in path2:
-        print(pos)
+    print("DFS:")
+    for position in path2:
+        print(position)
+    print("A*:")
+    for position in path3:
+        print(position)
 else:
     print("No path found.")
