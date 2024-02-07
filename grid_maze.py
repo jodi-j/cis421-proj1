@@ -47,17 +47,38 @@ class Maze:
                 frontier.append(((row, col - 1), path + [current]))
 
         return None
+    
+    def depth_first_search(self):
+        frontier = [(self.start, [])] #using stack data structure
+        explored = set()
+        while frontier:
+            current, path = frontier.pop()
+            row, col = current
+
+            if current == self.goal:
+                return path + [current]
+            
+            if 0 <= row < self.size and 0 <= col < self.size and self.maze[row][col] == '.' and current not in explored:
+                explored.add(current)
+                frontier.append(((row + 1, col), path + [current]))
+                frontier.append(((row - 1, col), path + [current]))
+                frontier.append(((row, col + 1), path + [current]))
+                frontier.append(((row, col - 1), path + [current]))
+        return None
 
 test = Maze(size=10, density=0.3)
 test.create_maze()
 test.print_maze()
 
 path = test.breadth_first_search()
+path2 = test.depth_first_search()
 
-if path:
-    print("Path found:")
+if path and path2:
+    print("BFS:")
     for position in path:
         print(position)
+    print("DFS")
+    for pos in path2:
+        print(pos)
 else:
     print("No path found.")
-
