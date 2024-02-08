@@ -12,10 +12,8 @@ class Maze:
         self.goal = None  # Will store the goal position once created
 
     def create_maze(self):
-        #self.maze[0][0] = 'S'
         goal_row, goal_col = random.randint(0, self.size - 1), random.randint(0, self.size - 1)
         self.goal = (goal_row, goal_col)
-       # self.maze[goal_row][goal_col] = 'G'
 
         num_obstacles = random.randint(10, 12)
         for _ in range(num_obstacles):
