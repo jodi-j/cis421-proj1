@@ -1,3 +1,8 @@
 # cis479-proj1
 
-you might need to use pip install turtle==0.0.1 if you are getting errors!
+Welcome to our maze path finder project for CIS 479! Below are the python modules you need to have installed in order for this program to work. All of these can be installed using pip.
+
+- random library
+- time library
+- queue library
+- collections library
