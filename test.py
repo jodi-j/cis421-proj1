@@ -1,4 +1,5 @@
 import random
+from time import time
 
 class Maze:
     def __init__(self, size, density):
@@ -80,7 +81,6 @@ def dfs(maze, current, visited, path):
 
     return False
 
-# Example usage:
 visited = [[False] * maze.size for _ in range(maze.size)]
 path = [(0, 0)]  # Starting point
 dfs(maze, (0, 0), visited, path)

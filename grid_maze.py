@@ -1,6 +1,7 @@
 import random
 from collections import deque
 from queue import PriorityQueue
+from time import time
 
 class Maze:
     def __init__(self, size, density):
@@ -125,7 +126,7 @@ class Maze:
 
         for position in reversed(fwdPath):
             finalPath.append(position)
-                        
+
         return finalPath
     
     def get_neighbors(self, cell):
@@ -143,19 +144,34 @@ test = Maze(size=10, density=0.3)
 test.create_maze()
 test.print_maze()
 
+bfs_start = time()
 path = test.breadth_first_search()
+bfs_end = time()
+bfs_elapsed = bfs_end - bfs_start
+
+dfs_start = time()
 path2 = test.depth_first_search()
+dfs_end = time()
+dfs_elapsed = dfs_end - dfs_start
+
+astar_start = time()
 path3 = test.astar()
+astar_end = time()
+astar_elapsed = astar_end - astar_start
 
 if path and path2 and path3:
     print("BFS:")
     for position in path:
         print(position)
+    print("Breadth-first search runtime is: " + str(bfs_elapsed) + " seconds.")
     print("DFS:")
     for position in path2:
         print(position)
+    print("Depth-first search runtime is: " + str(dfs_elapsed) + " seconds.")
     print("A*:")
     for position in path3:
         print(position)
+    print("A-star search runtime is: " + str(astar_elapsed) + " seconds.")
+
 else:
     print("No path found.")
