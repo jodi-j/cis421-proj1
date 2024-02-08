@@ -1,7 +1,7 @@
 import random
 from collections import deque
 from queue import PriorityQueue
-from time import time
+import time
 
 class Maze:
     def __init__(self, size, density):
@@ -36,7 +36,19 @@ class Maze:
                 else:
                     print(cell, end=' ')
             print()  # Move to the next line after printing each row
+    
+    def metadata(func):
+        def wrapper(*args, **kwargs):
+            start = time.time()
+            rv = func(*args, **kwargs)
+            total_time = time.time() - start
+            total_path = str(len(rv[0]))
+            nodes_expanded = str(len(rv[1]))
+            print(f'Meta Data for {func.__name__}: ', "\nTotal Time: ", total_time, "\nTotal path length: ", total_path, "\nNumber of nodes expanded: ", nodes_expanded, "\n")
+            return rv
+        return wrapper
 
+    @metadata
     def breadth_first_search(self):
         frontier = deque([(self.start, [])])  # Initialize the queue with the start position and an empty path
         explored = set()  # Keep track of visited positions
@@ -46,7 +58,7 @@ class Maze:
             row, col = current
 
             if current == self.goal:
-                return path + [current]  # Return the path when the goal is reached
+                return path + [current], frontier  # Return the path when the goal is reached
 
             if 0 <= row < self.size and 0 <= col < self.size and self.maze[row][col] == '.' and current not in explored:
                 explored.add(current)
@@ -57,6 +69,7 @@ class Maze:
 
         return None
     
+    @metadata
     def depth_first_search(self):
         frontier = [(self.start, [])] #using stack data structure
         explored = set()
@@ -65,7 +78,7 @@ class Maze:
             row, col = current
 
             if current == self.goal:
-                return path + [current]
+                return path + [current], frontier
             
             if 0 <= row < self.size and 0 <= col < self.size and self.maze[row][col] == '.' and current not in explored:
                 explored.add(current)
@@ -81,6 +94,7 @@ class Maze:
 
         return abs(x1-x2) + abs(y1-y2)
     
+    @metadata
     def astar(self):
         g_score = {(row, col): float('inf') for row in range(self.size) for col in range(self.size)}
         g_score[self.start] = 0 
@@ -127,7 +141,7 @@ class Maze:
         for position in reversed(fwdPath):
             finalPath.append(position)
 
-        return finalPath
+        return finalPath, aPath
     
     def get_neighbors(self, cell):
         row, col = cell
@@ -139,42 +153,43 @@ class Maze:
                 neighbors.append(((new_row, new_col), direction))
 
         return neighbors
+    
 
 test = Maze(size=10, density=0.3)
 test.create_maze()
 test.print_maze()
 
-bfs_start = time()
+#bfs_start = time()
 path = test.breadth_first_search()
-bfs_end = time()
-bfs_elapsed = bfs_end - bfs_start
+#bfs_end = time()
+#bfs_elapsed = bfs_end - bfs_start
 
-dfs_start = time()
+#dfs_start = time()
 path2 = test.depth_first_search()
-dfs_end = time()
-dfs_elapsed = dfs_end - dfs_start
+#dfs_end = time()
+#dfs_elapsed = dfs_end - dfs_start
 
-astar_start = time()
+#astar_start = time()
 path3 = test.astar()
-astar_end = time()
-astar_elapsed = astar_end - astar_start
+#astar_end = time()
+#astar_elapsed = astar_end - astar_start
 
 if path and path2 and path3:
     print("BFS:")
-    for position in path:
+    for position in path[0]:
         print(position)
-    print("Breadth-first search runtime is: " + str(bfs_elapsed) + " seconds.")
-    print("BFS Path length: " + str(len(path)))
+   # print("Breadth-first search runtime is: " + str(bfs_elapsed) + " seconds.")
+  # print("BFS Path length: " + str(len(path)))
     print("DFS:")
-    for position in path2:
+    for position in path2[0]:
         print(position)
-    print("Depth-first search runtime is: " + str(dfs_elapsed) + " seconds.")
-    print("DFS Path length: " + str(len(path2)))
+   # print("Depth-first search runtime is: " + str(dfs_elapsed) + " seconds.")
+   # print("DFS Path length: " + str(len(path2)))
     print("A*:")
-    for position in path3:
+    for position in path3[0]:
         print(position)
-    print("A-star search runtime is: " + str(astar_elapsed) + " seconds.")
-    print("A* Path length: " + str(len(path3)))
+   # print("A-star search runtime is: " + str(astar_elapsed) + " seconds.")
+    # print("A* Path length: " + str(len(path3)))
 
 else:
     print("No path found.")
