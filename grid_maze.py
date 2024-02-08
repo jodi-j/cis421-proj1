@@ -164,14 +164,17 @@ if path and path2 and path3:
     for position in path:
         print(position)
     print("Breadth-first search runtime is: " + str(bfs_elapsed) + " seconds.")
+    print("BFS Path length: " + str(len(path)))
     print("DFS:")
     for position in path2:
         print(position)
     print("Depth-first search runtime is: " + str(dfs_elapsed) + " seconds.")
+    print("DFS Path length: " + str(len(path2)))
     print("A*:")
     for position in path3:
         print(position)
     print("A-star search runtime is: " + str(astar_elapsed) + " seconds.")
+    print("A* Path length: " + str(len(path3)))
 
 else:
     print("No path found.")
