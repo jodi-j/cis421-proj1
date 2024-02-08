@@ -116,14 +116,17 @@ class Maze:
                     f_score[childCell]= temp_f_score
                     open.put((temp_f_score,self.h(childCell, self.goal),childCell))
                     aPath[childCell]=currCell
-        fwdPath={}
+        fwdPath=[]
+        finalPath = [self.start]
         cell=self.goal
         while cell!=self.start:
-            fwdPath[aPath[cell]]=cell
-            print(fwdPath[aPath[cell]])
-            print(len(fwdPath))
+            fwdPath.append(cell)
             cell=aPath[cell]
-        return fwdPath
+
+        for position in reversed(fwdPath):
+            finalPath.append(position)
+                        
+        return finalPath
     
     def get_neighbors(self, cell):
         row, col = cell
