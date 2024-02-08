@@ -42,7 +42,7 @@ class Maze:
             total_time = time.time() - start
             total_path = str(len(rv[0]))
             nodes_expanded = str(len(rv[1]))
-            print(f'Meta Data for {func.__name__}: ', "\nTotal Time: ", total_time, "\nTotal path length: ", total_path, "\nNumber of nodes expanded: ", nodes_expanded, "\n")
+            print(f'\nMeta Data for {func.__name__}: ', "\nTotal Time: ", total_time, "\nTotal path length: ", total_path, "\nNumber of nodes expanded: ", nodes_expanded, "\n")
             return rv
         return wrapper
 
