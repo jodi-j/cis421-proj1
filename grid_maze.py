@@ -1,5 +1,7 @@
 import random
 from collections import deque
+from queue import PriorityQueue
+import time
 import heapq
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,10 +17,8 @@ class Maze:
         self.goal = None  # Will store the goal position once created
 
     def create_maze(self):
-        #self.maze[0][0] = 'S'
         goal_row, goal_col = random.randint(0, self.size - 1), random.randint(0, self.size - 1)
         self.goal = (goal_row, goal_col)
-        self.maze[goal_row][goal_col] = 'G'
 
         num_obstacles = random.randint(10, 12)
         for _ in range(num_obstacles):
@@ -34,10 +34,24 @@ class Maze:
             for col_index, cell in enumerate(row):
                 if row_index == 0 and col_index == 0:
                     print('S', end=' ')
+                elif row_index == self.goal[0] and col_index == self.goal[1]:
+                    print('G', end=' ')
                 else:
                     print(cell, end=' ')
             print()  # Move to the next line after printing each row
+    
+    def metadata(func):
+        def wrapper(*args, **kwargs):
+            start = time.time()
+            rv = func(*args, **kwargs)
+            total_time = time.time() - start
+            total_path = str(len(rv[0]))
+            nodes_expanded = str(len(rv[1]))
+            print(f'\nMeta Data for {func.__name__}: ', "\nTotal Time: ", total_time, "\nTotal path length: ", total_path, "\nNumber of nodes expanded: ", nodes_expanded, "\n")
+            return rv
+        return wrapper
 
+    @metadata
     def breadth_first_search(self):
         frontier = deque([(self.start, [])])  # Initialize the queue with the start position and an empty path
         explored = set()  # Keep track of visited positions
@@ -47,7 +61,7 @@ class Maze:
             row, col = current
 
             if current == self.goal:
-                return path + [current]  # Return the path when the goal is reached
+                return path + [current], frontier  # Return the path when the goal is reached
 
             if 0 <= row < self.size and 0 <= col < self.size and self.maze[row][col] == '.' and current not in explored:
                 explored.add(current)
@@ -58,6 +72,7 @@ class Maze:
 
         return None
     
+    @metadata
     def depth_first_search(self):
         frontier = [(self.start, [])] #using stack data structure
         explored = set()
@@ -66,7 +81,7 @@ class Maze:
             row, col = current
 
             if current == self.goal:
-                return path + [current]
+                return path + [current], frontier
             
             if 0 <= row < self.size and 0 <= col < self.size and self.maze[row][col] == '.' and current not in explored:
                 explored.add(current)
@@ -75,6 +90,73 @@ class Maze:
                 frontier.append(((row, col + 1), path + [current]))
                 frontier.append(((row, col - 1), path + [current]))
         return None
+   
+    def h(self,cell1,cell2):
+        x1,y1=cell1
+        x2,y2=cell2
+
+        return abs(x1-x2) + abs(y1-y2)
+    
+    @metadata
+    def astar(self):
+        g_score = {(row, col): float('inf') for row in range(self.size) for col in range(self.size)}
+        g_score[self.start] = 0 
+        f_score = {(row, col): float('inf') for row in range(self.size) for col in range(self.size)}
+        f_score[self.start] = 0 
+
+        open=PriorityQueue()
+        open.put((self.h(self.start, self.goal),self.h(self.start, self.goal),self.start))
+        aPath={}
+    
+        while not open.empty():
+            currCell=open.get()[2]
+            if currCell== self.goal:
+                break
+            eswn = self.get_neighbors(currCell)
+            for d in eswn:
+                row, col = currCell  # Extract row and column from the tuple
+                if d[1] == 'E' and col + 1 < self.size and self.maze[row][col + 1] == '.':
+                    childCell = (row, col + 1)
+                elif d[1] == 'W' and col - 1 >= 0 and self.maze[row][col - 1] == '.':
+                    childCell = (row, col - 1)
+                elif d[1] == 'N' and row - 1 >= 0 and self.maze[row - 1][col] == '.':
+                    childCell = (row - 1, col)
+                elif d[1] == 'S' and row + 1 < self.size and self.maze[row + 1][col] == '.':
+                    childCell = (row + 1, col)
+                else:
+                    continue
+
+                temp_g_score=g_score[currCell]+1
+                temp_f_score=temp_g_score+self.h(childCell, self.goal)
+
+                if temp_f_score < f_score[childCell]:
+                    g_score[childCell]= temp_g_score
+                    f_score[childCell]= temp_f_score
+                    open.put((temp_f_score,self.h(childCell, self.goal),childCell))
+                    aPath[childCell]=currCell
+        fwdPath=[]
+        finalPath = [self.start]
+        cell=self.goal
+        while cell!=self.start:
+            fwdPath.append(cell)
+            cell=aPath[cell]
+
+        for position in reversed(fwdPath):
+            finalPath.append(position)
+
+        return finalPath, aPath
+    
+    def get_neighbors(self, cell):
+        row, col = cell
+        neighbors = []
+
+        for dr, dc, direction in [(1, 0, 'S'), (-1, 0, 'N'), (0, 1, 'E'), (0, -1, 'W')]:
+            new_row, new_col = row + dr, col + dc
+            if 0 <= new_row < self.size and 0 <= new_col < self.size and self.maze[new_row][new_col] == '.':
+                neighbors.append(((new_row, new_col), direction))
+
+        return neighbors
+    
     
     def maze_to_binary(self):
         binary_maze = [[1 if cell == 'x' else 0 for cell in row] for row in self.maze]
@@ -90,16 +172,38 @@ test = Maze(size=10, density=0.3)
 test.create_maze()
 test.print_maze()
 
+#bfs_start = time()
 path = test.breadth_first_search()
-path2 = test.depth_first_search()
+#bfs_end = time()
+#bfs_elapsed = bfs_end - bfs_start
 
-if path and path2:
+#dfs_start = time()
+path2 = test.depth_first_search()
+#dfs_end = time()
+#dfs_elapsed = dfs_end - dfs_start
+
+#astar_start = time()
+path3 = test.astar()
+#astar_end = time()
+#astar_elapsed = astar_end - astar_start
+
+if path and path2 and path3:
     print("BFS:")
-    for position in path:
+    for position in path[0]:
         print(position)
-    print("DFS")
-    for pos in path2:
-        print(pos)
+   # print("Breadth-first search runtime is: " + str(bfs_elapsed) + " seconds.")
+  # print("BFS Path length: " + str(len(path)))
+    print("DFS:")
+    for position in path2[0]:
+        print(position)
+   # print("Depth-first search runtime is: " + str(dfs_elapsed) + " seconds.")
+   # print("DFS Path length: " + str(len(path2)))
+    print("A*:")
+    for position in path3[0]:
+        print(position)
+   # print("A-star search runtime is: " + str(astar_elapsed) + " seconds.")
+    # print("A* Path length: " + str(len(path3)))
+
 else:
     print("No path found.")
     
