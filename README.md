@@ -6,3 +6,5 @@ Welcome to our maze path finder project for CIS 479! Below are the python module
 - time library
 - queue library
 - collections library
+- numpy
+- matplotlib
