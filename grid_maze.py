@@ -209,15 +209,15 @@ else:
     
 #transform maze into binary form for matplotlib visualization
 binary_array = test.maze_to_binary()
-BFS_array = binary_array
-DFS_array = binary_array
-A_array = binary_array
+BFS_array = test.maze_to_binary()
+DFS_array = test.maze_to_binary()
+A_array = test.maze_to_binary()
 
 #BFS visualization
 fig_BFS, ax_BFS = plt.subplots(figsize=(12, 12))
 #set values for path cells
 if path:
-    for position in path:
+    for position in path[0]:
         row, col = position
         if BFS_array[row][col] != -1 and BFS_array[row][col] != 2:
             BFS_array[row][col] = -2    
@@ -235,10 +235,10 @@ cbar_BFS.ax.set_yticklabels(['Agent Path', 'Start', 'Open Path', 'Obstacle', 'Go
 fig_DFS, ax_DFS = plt.subplots(figsize=(12, 12))
 #set values for path cells
 if path2:
-    for position in path2:
+    for position in path2[0]:
         row, col = position
         if DFS_array[row][col] != -1 and DFS_array[row][col] != 2:
-            DFS_array[row][col] = -2    
+            DFS_array[row][col] = -2 
 color_map = plt.cm.tab20b
 color_map.set_over('blue')
 color_map.set_under('green')
@@ -250,8 +250,21 @@ cbar_DFS = plt.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=color_map), ax=ax_
 cbar_DFS.ax.set_yticklabels(['Agent Path', 'Start', 'Open Path', 'Obstacle', 'Goal'])
 
 #A* visualization
-
-
-
+fig_A, ax_A = plt.subplots(figsize=(12, 12))
+#set values for path cells
+if path3:
+    for position in path3[0]:
+        row, col = position
+        if A_array[row][col] != -1 and A_array[row][col] != 2:
+            A_array[row][col] = -2
+color_map = plt.cm.tab20b
+color_map.set_over('blue')
+color_map.set_under('green')
+ax_A.imshow(A_array, cmap=color_map, interpolation='nearest', vmin=-2, vmax=2)
+ax_A.set_title("Maze Visualization - A*")
+bounds= [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
+norm = mcolors.BoundaryNorm(bounds, color_map.N)
+cbar_A = plt.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=color_map), ax=ax_A, ticks=[-2, -1, 0, 1, 2])
+cbar_A.ax.set_yticklabels(['Agent Path', 'Start', 'Open Path', 'Obstacle', 'Goal'])
 
 plt.show()
