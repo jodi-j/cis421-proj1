@@ -20,7 +20,7 @@ class Maze:
         goal_row, goal_col = random.randint(0, self.size - 1), random.randint(0, self.size - 1)
         self.goal = (goal_row, goal_col)
 
-        num_obstacles = random.randint(10, 12)
+        num_obstacles = self.density
         for _ in range(num_obstacles):
             obstacle_row, obstacle_col = random.randint(0, self.size - 1), random.randint(0, self.size - 1)
             while self.maze[obstacle_row][obstacle_col] != '.':
@@ -170,7 +170,10 @@ class Maze:
                     binary_maze[i][j] = 2
         return binary_maze
 
-test = Maze(size=10, density=0.3)
+
+user_size = int(input("Enter the size: ").strip())
+user_density = int(input("Enter an integer number of obstacles: ").strip())
+test = Maze(size=user_size, density=user_density)
 test.create_maze()
 test.print_maze()
 
