@@ -43,12 +43,15 @@ class Maze:
     def metadata(func):
         def wrapper(*args, **kwargs):
             start = time.time()
-            rv = func(*args, **kwargs)
-            total_path = str(len(rv[0]))
-            nodes_expanded = str(len(rv[2]))
-            total_time = time.time() - start
-            print(f'\nMeta Data for {func.__name__}: ', "\nTotal Time: ", total_time, "\nTotal path length: ", total_path, "\nNumber of nodes expanded: ", nodes_expanded, "\n")
-            return rv
+            try:
+                rv = func(*args, **kwargs)
+                total_path = str(len(rv[0]))
+                nodes_expanded = str(len(rv[2]))
+                total_time = time.time() - start
+                print(f'\nMeta Data for {func.__name__}: ', "\nTotal path length: ", total_path, "\nNumber of nodes expanded: ", nodes_expanded, "\nTotal Time: ", total_time, "\n")
+                return rv
+            except:
+                print("\nNo Meta Data")
         return wrapper
 
     @metadata
@@ -142,7 +145,11 @@ class Maze:
         cell=self.goal
         while cell!=self.start:
             fwdPath.append(cell)
-            cell=aPath[cell]
+            try:
+                cell=aPath[cell]
+            except Exception as e:
+                print(e)
+
 
         for position in reversed(fwdPath):
             finalPath.append(position)
@@ -169,6 +176,20 @@ class Maze:
                 elif (i, j) == self.goal:
                     binary_maze[i][j] = 2
         return binary_maze
+    
+def print_path(print_path):
+    if print_path:
+        if print_path == 'path':
+            print("BFS:")
+        elif print_path == 'path 2':
+            print("DFS:" )
+        elif print_path == 'path 3':
+            print("A*:" )
+        for position in path[0]:
+            print(position)
+    else:
+        print("No path found ")
+
 
 
 user_size = int(input("Enter the size: ").strip())
@@ -179,40 +200,42 @@ test.print_maze()
 
 #bfs_start = time()
 path = test.breadth_first_search()
+print_path(path)
 #bfs_end = time()
 #bfs_elapsed = bfs_end - bfs_start
 
 #dfs_start = time()
 path2 = test.depth_first_search()
+print_path(path2)
 #dfs_end = time()
 #dfs_elapsed = dfs_end - dfs_start
 
 #astar_start = time()
 path3 = test.astar()
+print_path(path3)
 #astar_end = time()
 #astar_elapsed = astar_end - astar_start
-
-if path and path2 and path3:
-    print("BFS:")
-    for position in path[0]:
-        print(position)
-   # print("Breadth-first search runtime is: " + str(bfs_elapsed) + " seconds.")
-  # print("BFS Path length: " + str(len(path)))
+# if path and path2 and path3:
+#     print("BFS:")
+#     for position in path[0]:
+#         print(position)
+#    # print("Breadth-first search runtime is: " + str(bfs_elapsed) + " seconds.")
+#   # print("BFS Path length: " + str(len(path)))
   
-    print("DFS:")
-    for position in path2[0]:
-        print(position)
-   # print("Depth-first search runtime is: " + str(dfs_elapsed) + " seconds.")
-   # print("DFS Path length: " + str(len(path2)))
+#     print("DFS:")
+#     for position in path2[0]:
+#         print(position)
+#    # print("Depth-first search runtime is: " + str(dfs_elapsed) + " seconds.")
+#    # print("DFS Path length: " + str(len(path2)))
    
-    print("A*:")
-    for position in path3[0]:
-        print(position)
-   # print("A-star search runtime is: " + str(astar_elapsed) + " seconds.")
-    # print("A* Path length: " + str(len(path3)))
+#     print("A*:")
+#     for position in path3[0]:
+#         print(position)
+#    # print("A-star search runtime is: " + str(astar_elapsed) + " seconds.")
+#     # print("A* Path length: " + str(len(path3)))
 
-else:
-    print("No path found.")
+# else:
+#     print("No path found.")
 
 #transform maze into binary form for matplotlib visualization
 BFS_array = test.maze_to_binary()
@@ -220,7 +243,7 @@ DFS_array = test.maze_to_binary()
 A_array = test.maze_to_binary()
 
 #BFS visualization
-fig_BFS, ax_BFS = plt.subplots(figsize=(12, 12))
+fig_BFS, ax_BFS = plt.subplots(figsize=(user_size, user_size))
 
 if path:
     #set values for explored path
@@ -243,7 +266,7 @@ cbar_BFS = plt.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=color_map), ax=ax_
 cbar_BFS.ax.set_yticklabels(['Explored Path', 'Final Path', 'Start', 'Open Path', 'Obstacle', 'Goal'])
 
 #DFS visualization
-fig_DFS, ax_DFS = plt.subplots(figsize=(12, 12))
+fig_DFS, ax_DFS = plt.subplots(figsize=(user_size, user_size))
 if path2:
     #set values for explored path
     for position in path2[2]:
@@ -264,7 +287,7 @@ cbar_DFS = plt.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=color_map), ax=ax_
 cbar_DFS.ax.set_yticklabels(['Explored Path', 'Final Path', 'Start', 'Open Path', 'Obstacle', 'Goal'])
 
 #A* visualization
-fig_A, ax_A = plt.subplots(figsize=(12, 12))
+fig_A, ax_A = plt.subplots(figsize=(user_size, user_size))
 if path3:
     #set values for explored path
     for position in path3[2]:
