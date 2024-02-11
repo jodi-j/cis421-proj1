@@ -46,7 +46,7 @@ class Maze:
             rv = func(*args, **kwargs)
             total_time = time.time() - start
             total_path = str(len(rv[0]))
-            nodes_expanded = str(len(rv[1]))
+            nodes_expanded = str(len(rv[2]))
             print(f'\nMeta Data for {func.__name__}: ', "\nTotal Time: ", total_time, "\nTotal path length: ", total_path, "\nNumber of nodes expanded: ", nodes_expanded, "\n")
             return rv
         return wrapper
@@ -107,6 +107,7 @@ class Maze:
         open=PriorityQueue()
         open.put((self.h(self.start, self.goal),self.h(self.start, self.goal),self.start))
         aPath={}
+        explored = set()
     
         while not open.empty():
             currCell=open.get()[2]
@@ -134,6 +135,8 @@ class Maze:
                     f_score[childCell]= temp_f_score
                     open.put((temp_f_score,self.h(childCell, self.goal),childCell))
                     aPath[childCell]=currCell
+                    explored.add(childCell)
+               
         fwdPath=[]
         finalPath = [self.start]
         cell=self.goal
@@ -144,7 +147,7 @@ class Maze:
         for position in reversed(fwdPath):
             finalPath.append(position)
 
-        return finalPath, aPath
+        return finalPath, aPath, explored
     
     def get_neighbors(self, cell):
         row, col = cell
@@ -261,10 +264,10 @@ cbar_DFS.ax.set_yticklabels(['Explored Path', 'Final Path', 'Start', 'Open Path'
 fig_A, ax_A = plt.subplots(figsize=(12, 12))
 if path3:
     #set values for explored path
-    for position in path3[1]:
+    for position in path3[2]:
         row, col = position
-        if DFS_array[row][col] != -1 and DFS_array[row][col] != 2:
-            DFS_array[row][col] = -3
+        if A_array[row][col] != -1 and A_array[row][col] != 2:
+            A_array[row][col] = -3
     #set values for final path
     for position in path3[0]:
         row, col = position
