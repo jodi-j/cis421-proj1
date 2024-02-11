@@ -61,7 +61,7 @@ class Maze:
             row, col = current
 
             if current == self.goal:
-                return path + [current], frontier  # Return the path when the goal is reached
+                return path + [current], frontier, explored  # Return the path when the goal is reached
 
             if 0 <= row < self.size and 0 <= col < self.size and self.maze[row][col] == '.' and current not in explored:
                 explored.add(current)
@@ -81,7 +81,7 @@ class Maze:
             row, col = current
 
             if current == self.goal:
-                return path + [current], frontier
+                return path + [current], frontier, explored
             
             if 0 <= row < self.size and 0 <= col < self.size and self.maze[row][col] == '.' and current not in explored:
                 explored.add(current)
@@ -157,7 +157,6 @@ class Maze:
 
         return neighbors
     
-    
     def maze_to_binary(self):
         binary_maze = [[1 if cell == 'x' else 0 for cell in row] for row in self.maze]
         for i in range(self.size):
@@ -193,11 +192,13 @@ if path and path2 and path3:
         print(position)
    # print("Breadth-first search runtime is: " + str(bfs_elapsed) + " seconds.")
   # print("BFS Path length: " + str(len(path)))
+  
     print("DFS:")
     for position in path2[0]:
         print(position)
    # print("Depth-first search runtime is: " + str(dfs_elapsed) + " seconds.")
    # print("DFS Path length: " + str(len(path2)))
+   
     print("A*:")
     for position in path3[0]:
         print(position)
@@ -206,65 +207,75 @@ if path and path2 and path3:
 
 else:
     print("No path found.")
-    
+
 #transform maze into binary form for matplotlib visualization
-binary_array = test.maze_to_binary()
 BFS_array = test.maze_to_binary()
 DFS_array = test.maze_to_binary()
 A_array = test.maze_to_binary()
 
 #BFS visualization
 fig_BFS, ax_BFS = plt.subplots(figsize=(12, 12))
-#set values for path cells
+
 if path:
+    #set values for explored path
+    for position in path[2]:
+        row, col = position
+        if BFS_array[row][col] != -1 and BFS_array[row][col] != 2:
+            BFS_array[row][col] = -3
+    #set values for final path
     for position in path[0]:
         row, col = position
         if BFS_array[row][col] != -1 and BFS_array[row][col] != 2:
             BFS_array[row][col] = -2    
-color_map = plt.cm.tab20b
-color_map.set_over('blue')
-color_map.set_under('green')
-ax_BFS.imshow(BFS_array, cmap=color_map, interpolation='nearest', vmin=-2, vmax=2)
+            
+color_map = plt.cm.plasma
+ax_BFS.imshow(BFS_array, cmap=color_map, interpolation='nearest', vmin=-3.5, vmax=2.5)
 ax_BFS.set_title("Maze Visualization - BFS")
-bounds= [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
+bounds= [-3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
 norm = mcolors.BoundaryNorm(bounds, color_map.N)
-cbar_BFS = plt.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=color_map), ax=ax_BFS, ticks=[-2, -1, 0, 1, 2])
-cbar_BFS.ax.set_yticklabels(['Agent Path', 'Start', 'Open Path', 'Obstacle', 'Goal'])
+cbar_BFS = plt.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=color_map), ax=ax_BFS, ticks=[-3, -2, -1, 0, 1, 2])
+cbar_BFS.ax.set_yticklabels(['Explored Path', 'Final Path', 'Start', 'Open Path', 'Obstacle', 'Goal'])
 
 #DFS visualization
 fig_DFS, ax_DFS = plt.subplots(figsize=(12, 12))
-#set values for path cells
 if path2:
+    #set values for explored path
+    for position in path2[2]:
+        row, col = position
+        if DFS_array[row][col] != -1 and DFS_array[row][col] != 2:
+            DFS_array[row][col] = -3
+    #set values for final path
     for position in path2[0]:
         row, col = position
         if DFS_array[row][col] != -1 and DFS_array[row][col] != 2:
             DFS_array[row][col] = -2 
-color_map = plt.cm.tab20b
-color_map.set_over('blue')
-color_map.set_under('green')
-ax_DFS.imshow(DFS_array, cmap=color_map, interpolation='nearest', vmin=-2, vmax=2)
+color_map = plt.cm.plasma
+ax_DFS.imshow(DFS_array, cmap=color_map, interpolation='nearest', vmin=-3.5, vmax=2.5)
 ax_DFS.set_title("Maze Visualization - DFS")
-bounds= [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
+bounds= [-3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
 norm = mcolors.BoundaryNorm(bounds, color_map.N)
-cbar_DFS = plt.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=color_map), ax=ax_DFS, ticks=[-2, -1, 0, 1, 2])
-cbar_DFS.ax.set_yticklabels(['Agent Path', 'Start', 'Open Path', 'Obstacle', 'Goal'])
+cbar_DFS = plt.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=color_map), ax=ax_DFS, ticks=[-3, -2, -1, 0, 1, 2])
+cbar_DFS.ax.set_yticklabels(['Explored Path', 'Final Path', 'Start', 'Open Path', 'Obstacle', 'Goal'])
 
 #A* visualization
 fig_A, ax_A = plt.subplots(figsize=(12, 12))
-#set values for path cells
 if path3:
+    #set values for explored path
+    for position in path3[1]:
+        row, col = position
+        if DFS_array[row][col] != -1 and DFS_array[row][col] != 2:
+            DFS_array[row][col] = -3
+    #set values for final path
     for position in path3[0]:
         row, col = position
         if A_array[row][col] != -1 and A_array[row][col] != 2:
             A_array[row][col] = -2
-color_map = plt.cm.tab20b
-color_map.set_over('blue')
-color_map.set_under('green')
-ax_A.imshow(A_array, cmap=color_map, interpolation='nearest', vmin=-2, vmax=2)
+color_map = plt.cm.plasma
+ax_A.imshow(A_array, cmap=color_map, interpolation='nearest', vmin=-3.5, vmax=2)
 ax_A.set_title("Maze Visualization - A*")
-bounds= [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
+bounds= [-3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
 norm = mcolors.BoundaryNorm(bounds, color_map.N)
-cbar_A = plt.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=color_map), ax=ax_A, ticks=[-2, -1, 0, 1, 2])
-cbar_A.ax.set_yticklabels(['Agent Path', 'Start', 'Open Path', 'Obstacle', 'Goal'])
+cbar_A = plt.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=color_map), ax=ax_A, ticks=[-3, -2, -1, 0, 1, 2])
+cbar_A.ax.set_yticklabels(['Explored Path','Final Path', 'Start', 'Open Path', 'Obstacle', 'Goal'])
 
 plt.show()
