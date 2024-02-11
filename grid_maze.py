@@ -197,7 +197,7 @@ class Maze: #defines a Maze object
     
 
 
-def main(): 
+def main()
     '''The main function calls each algorithm and builds the visualization.'''
 
     def print_path(print_path):
@@ -300,5 +300,5 @@ def main():
 
     plt.show() #display all three visualizations
 
-if __name__ == '''___main___''':
+if __name__ == '__main__':
     main()
