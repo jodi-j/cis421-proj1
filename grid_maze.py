@@ -195,24 +195,22 @@ class Maze: #defines a Maze object
                     binary_maze[i][j] = 2
         return binary_maze
     
-
+def print_path(print_path):
+    '''This helper function for main is used to print the paths for each maze.'''
+    if print_path:
+        if print_path == 'path':
+            print("BFS:")
+        elif print_path == 'path 2':
+            print("DFS:" )
+        elif print_path == 'path 3':
+            print("A*:" )
+        for position in print_path[0]:
+            print(position)
+    else:
+        print("No path found ")
 
 def main():
     '''The main function calls each algorithm and builds the visualization.'''
-
-    def print_path(print_path):
-        '''This helper function is used to print the paths for each maze.'''
-        if print_path:
-            if print_path == 'path':
-                print("BFS:")
-            elif print_path == 'path 2':
-                print("DFS:" )
-            elif print_path == 'path 3':
-                print("A*:" )
-            for position in path[0]:
-                print(position)
-        else:
-            print("No path found ")
     
     user_size = int(input("Enter the size: ").strip()) #allow user to enter maze size
     user_density = int(input("Enter an integer number of obstacles: ").strip()) #allow user to enter maze density
