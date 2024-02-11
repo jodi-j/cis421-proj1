@@ -197,7 +197,7 @@ class Maze: #defines a Maze object
     
 
 
-def main()
+def main():
     '''The main function calls each algorithm and builds the visualization.'''
 
     def print_path(print_path):
